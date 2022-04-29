@@ -1,5 +1,4 @@
 import { useSocket } from "../../contexts/SocketProvider";
-import { FriendInfo } from "./FriendInfo";
 
 export const FriendList = () => {
   const { socket } = useSocket();
@@ -11,9 +10,7 @@ export const FriendList = () => {
         seu id: <code>{socket.id}</code>
       </p>
 
-      <div className="w-full h-full mt-8 px-3">
-        <FriendInfo />
-      </div>
+      <div className="w-full h-full mt-8 px-3"></div>
       <div className="w-full flex">
         <input
           type="text"
