@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -9,15 +11,18 @@ import { io, Socket } from "socket.io-client";
 
 interface SocketContext {
   socket: Socket;
+  userTag: string | undefined;
+  setUserTag: Dispatch<SetStateAction<string | undefined>>;
 }
 
 const SocketContext = createContext<SocketContext>({} as SocketContext);
 
 export const SocketProvider = ({ children }: PropsWithChildren<any>) => {
+  const [userTag, setUserTag] = useState<string>();
   const [socket, setSocket] = useState<Socket>({} as Socket);
 
   useEffect(() => {
-    const socketConnection = io("http://localhost:8080");
+    const socketConnection = io("http://localhost:8080", {});
     socketConnection.on("connect", () => {
       setSocket(socketConnection);
     });
@@ -28,7 +33,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<any>) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, userTag, setUserTag }}>
       {children}
     </SocketContext.Provider>
   );
