@@ -1,9 +1,9 @@
-import { useSocket } from "../../contexts/SocketProvider";
+import { useAuth } from "../../contexts/AuthProvider";
 import { Chat } from "./Chat";
 import { UserTagPrompt } from "./UserTagPrompt";
 
 export const MainContent = () => {
-  const { userTag } = useSocket();
+  const { userId } = useAuth();
 
-  return <>{userTag ? <Chat /> : <UserTagPrompt />}</>;
+  return <>{userId ? <Chat /> : <UserTagPrompt />}</>;
 };

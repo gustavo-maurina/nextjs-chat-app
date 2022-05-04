@@ -1,20 +1,29 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiUrl } from "../../constants/apiUrl";
+import { useAuth } from "../../contexts/AuthProvider";
 import { useSocket } from "../../contexts/SocketProvider";
+import { AddFriendInput } from "./AddFriendInput";
 import { FriendInfo } from "./FriendInfo";
 
 export const FriendList = () => {
-  const { socket } = useSocket();
   const [friendList, setFriendList] = useState<any[]>();
+  const { userId } = useAuth();
+  const { socket } = useSocket();
 
   useEffect(() => {
-    fetch("http://localhost:8080/friend-list").then((res) =>
-      res.json().then((data) => {
-        console.log(data.friendList);
+    async function getFriendList() {
+      try {
+        const req = await axios.get(`${apiUrl}/friend-lists/${userId}`);
+        if (req.status === 200) setFriendList(req.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
 
-        setFriendList(data.friendList);
-      })
-    );
-  }, []);
+    getFriendList();
+    console.log(friendList);
+  }, [userId]);
 
   return (
     <div className="h-full w-1/4 min-w-[300px] bg-gray-300 flex flex-col items-center justify-between">
@@ -29,15 +38,7 @@ export const FriendList = () => {
             <FriendInfo key={idx} friend={friend} />
           ))}
       </div>
-      <div className="w-full flex">
-        <input
-          type="text"
-          placeholder="Adicionar amigo..."
-          name="friendName"
-          className="px-2 w-full drop-shadow h-10"
-        />
-        <button className="w-12 bg-green-400 text-2xl">+</button>
-      </div>
+      <AddFriendInput />
     </div>
   );
 };

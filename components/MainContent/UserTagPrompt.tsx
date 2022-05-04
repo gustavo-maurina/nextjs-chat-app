@@ -1,22 +1,39 @@
 import { FormEvent, useRef, useState } from "react";
-import { ArrowRight, Frown } from "react-feather";
-import { apiUrl } from "../../constants/apiUrl";
-import { useSocket } from "../../contexts/SocketProvider";
+import { ArrowRight, Frown, Plus } from "react-feather";
+import { useAuth } from "../../contexts/AuthProvider";
+import { createUserRequest } from "../../services/createUserRequest";
+import { loginUserRequest } from "../../services/loginUserRequest";
+
+interface reqFailed {
+  failed: boolean;
+  type: number;
+}
 
 export const UserTagPrompt = () => {
-  const [requestFailed, setRequestFailed] = useState<boolean>(false);
+  const { setUserId } = useAuth();
   const userTagRef = useRef<HTMLInputElement>(null);
-  const { setUserTag } = useSocket();
+  const [requestFailed, setRequestFailed] = useState<reqFailed>({
+    failed: false,
+    type: 0,
+  });
 
-  async function sendUserTag(e: FormEvent) {
-    e.preventDefault();
+  async function sendUserTag(e?: FormEvent): Promise<void> {
+    if (e) e.preventDefault();
     const userTag = userTagRef.current?.value;
-    const body = JSON.stringify({ userTag });
-    const method = "POST";
+    const { status, data } = await loginUserRequest(userTag as string);
 
-    const req = await fetch(`${apiUrl}/login`, { body, method });
-    if (req.status === 200) return setUserTag(userTag);
-    setRequestFailed(true);
+    if (status === 200) return setUserId(data.id);
+
+    setRequestFailed({
+      failed: true,
+      type: status,
+    });
+  }
+
+  async function newUser() {
+    const userTag = userTagRef.current?.value;
+    const { status, data } = await createUserRequest(userTag as string);
+    if (status === 200) setUserId(data.id);
   }
 
   return (
@@ -34,10 +51,23 @@ export const UserTagPrompt = () => {
           <ArrowRight className="m-auto" />
         </button>
       </form>
-      {requestFailed && (
-        <p className="text-red-400 flex items-center gap-2">
-          <Frown /> Erro ao definir usuário
-        </p>
+      {requestFailed.failed && (
+        <>
+          <div className="flex gap-2 text-red-400">
+            <Frown />
+            {requestFailed.type === 404
+              ? "Usuário não existe"
+              : "Erro no servidor"}
+          </div>
+          <div>
+            <button
+              onClick={newUser}
+              className="bg-green-400 p-1 px-2 outline outline-1 flex items-center"
+            >
+              <Plus size={14} className="mt-[1px] mr-1" /> Criar usuário
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

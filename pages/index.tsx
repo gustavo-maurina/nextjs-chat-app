@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { MainContent } from "../components/MainContent";
-import { SocketProvider } from "../contexts/SocketProvider";
+import { AuthProvider } from "../contexts/AuthProvider";
 
 const Home: NextPage = () => {
   return (
@@ -9,13 +9,13 @@ const Home: NextPage = () => {
       <Head>
         <title>Chat-app</title>
       </Head>
-      <SocketProvider>
-        <div className="bg-slate-900 w-screen h-screen flex items-center px-12">
-          <div className="h-3/5 w-full flex gap-12 justify-center">
+      <div className="bg-slate-900 w-screen h-screen flex items-center px-12">
+        <div className="h-3/5 w-full flex gap-12 justify-center">
+          <AuthProvider>
             <MainContent />
-          </div>
+          </AuthProvider>
         </div>
-      </SocketProvider>
+      </div>
     </>
   );
 };

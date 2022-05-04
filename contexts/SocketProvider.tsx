@@ -1,28 +1,27 @@
 import {
   createContext,
-  Dispatch,
   PropsWithChildren,
-  SetStateAction,
   useContext,
   useEffect,
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
+import { useAuth } from "./AuthProvider";
 
 interface SocketContext {
   socket: Socket;
-  userTag: string | undefined;
-  setUserTag: Dispatch<SetStateAction<string | undefined>>;
 }
 
 const SocketContext = createContext<SocketContext>({} as SocketContext);
 
 export const SocketProvider = ({ children }: PropsWithChildren<any>) => {
-  const [userTag, setUserTag] = useState<string>();
   const [socket, setSocket] = useState<Socket>({} as Socket);
+  const { userId } = useAuth();
 
   useEffect(() => {
-    const socketConnection = io("http://localhost:8080", {});
+    const socketConnection = io("http://localhost:8080", {
+      query: { userId },
+    });
     socketConnection.on("connect", () => {
       setSocket(socketConnection);
     });
@@ -30,10 +29,10 @@ export const SocketProvider = ({ children }: PropsWithChildren<any>) => {
     return () => {
       socketConnection.close();
     };
-  }, []);
+  }, [userId]);
 
   return (
-    <SocketContext.Provider value={{ socket, userTag, setUserTag }}>
+    <SocketContext.Provider value={{ socket }}>
       {children}
     </SocketContext.Provider>
   );
