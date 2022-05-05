@@ -17,7 +17,7 @@ export const FriendContextMenu = ({ friendId, closeMenu }: Props) => {
   }
 
   return (
-    <div className="ctx-menu absolute z-30 w-fit bg-zinc-900 text-slate-300 -bottom-[50%] right-2 drop-shadow">
+    <div className="absolute z-30 w-fit bg-zinc-900 text-slate-300 -bottom-[50%] right-2 drop-shadow">
       <ul>
         <li onClick={sendMessage} className="context-menu-item">
           <MessageSquare size={17} /> Enviar mensagem
