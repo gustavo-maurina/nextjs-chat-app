@@ -22,7 +22,6 @@ export const FriendList = () => {
     }
 
     getFriendList();
-    console.log(friendList);
   }, [userId]);
 
   return (
@@ -35,10 +34,12 @@ export const FriendList = () => {
       <div className="w-full h-full mt-8 px-3">
         {friendList &&
           friendList.map((friend, idx) => (
-            <FriendInfo key={idx} friend={friend} />
+            <>
+              <FriendInfo key={idx} friend={friend} />
+            </>
           ))}
       </div>
-      <AddFriendInput />
+      <AddFriendInput friendList={friendList} />
     </div>
   );
 };

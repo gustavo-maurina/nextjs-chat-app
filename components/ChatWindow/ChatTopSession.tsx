@@ -8,15 +8,12 @@ export const ChatTopSession = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    if (socket.on)
-      socket.on("receive-message", ({ senderId }) =>
-        setCurrentChatId(senderId)
-      );
+    if (!socket.on) return;
+    socket.on("receive-message", ({ senderId }) => setCurrentChatId(senderId));
   }, [socket, setCurrentChatId]);
 
-  function changeChatId() {
-    if (!inputRef.current?.value) return;
-    setCurrentChatId(inputRef.current?.value);
+  function changeChatId(): void {
+    if (inputRef.current?.value) setCurrentChatId(inputRef.current?.value);
   }
 
   return currentChatId ? (

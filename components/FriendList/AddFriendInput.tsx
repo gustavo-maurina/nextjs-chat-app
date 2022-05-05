@@ -1,7 +1,26 @@
-export const AddFriendInput = () => {
+import axios from "axios";
+import { FormEvent, useRef } from "react";
+import { apiUrl } from "../../constants/apiUrl";
+import { useAuth } from "../../contexts/AuthProvider";
+
+export const AddFriendInput = ({ friendList }: any) => {
+  const friendNameRef = useRef<HTMLInputElement>(null);
+  const { userId } = useAuth();
+
+  async function addFriend(e: FormEvent) {
+    e.preventDefault();
+    const friendTag = friendNameRef.current?.value;
+    try {
+      await axios.post(`${apiUrl}/friend-lists`, { userId, friendTag });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
-    <form className="w-full flex">
+    <form onSubmit={addFriend} className="w-full flex">
       <input
+        ref={friendNameRef}
         type="text"
         placeholder="Adicionar amigo..."
         name="friendName"
